@@ -100,6 +100,12 @@ export default function RouteResult({ route, source, destination }) {
         <Ticket size={16} />
         Book Ticket — Digital Pass
       </button>
+      <button
+        className="mt-4 w-full py-3 rounded-xl font-semibold bg-green-600 hover:bg-green-500 transition-all"
+        onClick={() => alert("🎫 Ticket booking coming soon!")}
+      >
+        Book Ticket 🚇
+      </button>
     </motion.div>
   );
 }
