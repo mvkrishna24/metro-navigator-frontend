@@ -23,7 +23,7 @@ const TAG_STYLES = {
   },
 };
 
-export default function RouteResult({ route, source, destination }) {
+export default function RouteResult({ route, source, destination, onFavorite }) {
   if (!route) return null;
 
   const tagStyle = TAG_STYLES[route.tag] || TAG_STYLES["AI Recommended"];
@@ -33,79 +33,81 @@ export default function RouteResult({ route, source, destination }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-navy-800/60 border border-white/8 rounded-2xl p-6 mt-6 backdrop-blur-sm"
-      style={{
-        boxShadow: "0 4px 40px rgba(0,0,0,0.4)",
-        animation: "fadeSlideIn 0.4s ease-out",
-      }}
+      className="bg-navy-800/60 border border-white/10 rounded-2xl p-6 mt-6 backdrop-blur-sm"
+      style={{ boxShadow: "0 4px 40px rgba(0,0,0,0.4)" }}
     >
-      {/* Header */}
+      {/* HEADER */}
       <div className="flex items-start justify-between mb-5">
         <div>
           <h3 className="text-base font-semibold text-white">
             {source} → {destination}
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5 font-mono">
-            {route.path.length} stations • {route.coaches}
+          <p className="text-xs text-slate-500 mt-1 font-mono">
+            {(route.path?.length || 0)} stations • {route.coaches}
           </p>
         </div>
+
         <div
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-mono ${tagStyle.bg} ${tagStyle.border} ${tagStyle.text}`}
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-mono ${tagStyle.bg} ${tagStyle.border} ${tagStyle.text}`}
         >
           {tagStyle.icon}
           {route.tag}
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* STATS */}
       <div className="grid grid-cols-3 gap-3 mb-5">
         {[
           {
             icon: <Clock size={14} />,
-            label: "Travel Time",
+            label: "Time",
             value: route.time,
           },
-          { icon: <Ticket size={14} />, label: "Fare", value: route.fare },
+          {
+            icon: <Ticket size={14} />,
+            label: "Fare",
+            value: `₹${route.fare}`,
+          },
           {
             icon: <Train size={14} />,
-            label: "Frequency",
+            label: "Freq",
             value: route.frequency,
           },
         ].map((stat) => (
           <div
             key={stat.label}
-            className="bg-navy-800/60 border border-white/10 rounded-2xl p-6 mt-6 glow-blue"
+            className="bg-navy-800/50 border border-white/10 rounded-xl p-3 text-center"
           >
-            <div className="flex justify-center text-sky-500 mb-1.5">
+            <div className="flex justify-center text-sky-400 mb-1">
               {stat.icon}
             </div>
-            <p className="text-xs text-slate-500 mb-0.5">{stat.label}</p>
+            <p className="text-xs text-slate-500">{stat.label}</p>
             <p className="text-sm font-semibold text-white">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      {/* Timeline */}
+      {/* TIMELINE */}
       <RouteTimeline route={route} />
 
-      {/* Book Ticket */}
-      <button
-        onClick={() =>
-          alert(
-            "🎫 Coming soon: Digital Metro Ticketing\n\nScan QR • Tap & Go • No queue!",
-          )
-        }
-        className="mt-6 w-full py-3.5 rounded-xl border border-sky-500/30 text-sky-400 text-sm font-semibold hover:bg-sky-500/10 transition-all duration-200 flex items-center justify-center gap-2"
-      >
-        <Ticket size={16} />
-        Book Ticket — Digital Pass
-      </button>
-      <button
-        className="mt-4 w-full py-3 rounded-xl font-semibold bg-green-600 hover:bg-green-500 transition-all"
-        onClick={() => alert("🎫 Ticket booking coming soon!")}
-      >
-        Book Ticket 🚇
-      </button>
+      {/* ACTION BUTTONS */}
+      <div className="mt-6 flex gap-3">
+        <button
+          onClick={onFavorite}
+          className="flex-1 py-2 rounded-xl text-xs bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition"
+        >
+          ⭐ Save Route
+        </button>
+
+        <button
+          onClick={() =>
+            alert("🎫 Coming soon: Digital Metro Ticketing 🚇")
+          }
+          className="flex-1 py-2 rounded-xl border border-sky-500/30 text-sky-400 text-xs hover:bg-sky-500/10 transition"
+        >
+          Book Ticket
+        </button>
+      </div>
     </motion.div>
   );
 }

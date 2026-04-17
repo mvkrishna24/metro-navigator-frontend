@@ -1,24 +1,32 @@
-import { useState } from 'react';
-import Navbar from './components/Navbar';
-import SearchPanel from './components/SearchPanel';
-import SuggestionCard from './components/SuggestionCard';
-import LoadingState from './components/LoadingState';
-import RouteResult from './components/RouteResult';
-import { ROUTES, getRouteKey, generateMockRoute } from './data/metroData';
+import { useState } from "react";
+import Navbar from "./components/Navbar";
+import SearchPanel from "./components/SearchPanel";
+import SuggestionCard from "./components/SuggestionCard";
+import LoadingState from "./components/LoadingState";
+import RouteResult from "./components/RouteResult";
+import { ROUTES, getRouteKey, generateMockRoute } from "./data/metroData";
 
 export default function App() {
   const [suggestion, setSuggestion] = useState(null);
-  const [suggestionLandmark, setSuggestionLandmark] = useState('');
+  const [suggestionLandmark, setSuggestionLandmark] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [routeSource, setRouteSource] = useState('');
-  const [routeDest, setRouteDest] = useState('');
+  const [routeSource, setRouteSource] = useState("");
+  const [routeDest, setRouteDest] = useState("");
+  const [favorites, setFavorites] = useState([]);
 
   // ✅ FIXED — Proper suggestion handler
   const handleSuggestion = (info, landmark) => {
     setSuggestion(info);
-    setSuggestionLandmark(landmark || '');
+    setSuggestionLandmark(landmark || "");
     setResult(null);
+  };
+
+  const handleAddFavorite = () => {
+    if (!routeSource || !routeDest) return;
+
+    const newFav = `${routeSource} → ${routeDest}`;
+    setFavorites((prev) => [newFav, ...prev].slice(0, 3));
   };
 
   // ✅ Route logic
@@ -30,9 +38,7 @@ export default function App() {
 
     setTimeout(() => {
       const { key } = getRouteKey(source, destination);
-      const route = key
-        ? ROUTES[key]
-        : generateMockRoute(source, destination);
+      const route = key ? ROUTES[key] : generateMockRoute(source, destination);
 
       setResult(route);
       setLoading(false);
@@ -44,7 +50,7 @@ export default function App() {
       className="min-h-screen"
       style={{
         background:
-          'radial-gradient(ellipse at 20% 0%, #071428 0%, #020b18 60%)',
+          "radial-gradient(ellipse at 20% 0%, #071428 0%, #020b18 60%)",
       }}
     >
       <Navbar />
@@ -54,8 +60,8 @@ export default function App() {
         className="fixed inset-0 pointer-events-none opacity-[0.03]"
         style={{
           backgroundImage:
-            'linear-gradient(#0ea5e9 1px, transparent 1px), linear-gradient(90deg, #0ea5e9 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
+            "linear-gradient(#0ea5e9 1px, transparent 1px), linear-gradient(90deg, #0ea5e9 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
         }}
       />
 
@@ -71,7 +77,7 @@ export default function App() {
         <h1 className="font-display text-4xl sm:text-5xl text-white mb-3 leading-tight">
           Navigate Delhi Metro
           <br />
-          <span style={{ color: '#0ea5e9' }}>Smarter.</span>
+          <span style={{ color: "#0ea5e9" }}>Smarter.</span>
         </h1>
 
         <p className="text-slate-500 text-sm sm:text-base max-w-md mx-auto">
@@ -84,14 +90,11 @@ export default function App() {
         <SearchPanel
           onFind={handleFind}
           onSuggestion={handleSuggestion}
+          favorites={favorites}
         />
-
         {/* Suggestion */}
         {suggestion && (
-          <SuggestionCard
-            info={suggestion}
-            landmark={suggestionLandmark}
-          />
+          <SuggestionCard info={suggestion} landmark={suggestionLandmark} />
         )}
 
         {/* Loading */}
@@ -103,16 +106,33 @@ export default function App() {
             route={result}
             source={routeSource}
             destination={routeDest}
+            onFavorite={handleAddFavorite}
           />
         )}
       </div>
+
+      {favorites.length > 0 && (
+        <div className="fixed bottom-20 left-0 right-0 text-center py-3 border-t border-white/5 text-xs text-slate-700 font-mono">
+          <p>Favorite Routes:</p>
+          <ul className="flex justify-center gap-4 mt-2">
+            {favorites.map((fav, index) => (
+              <li
+                key={index}
+                className="bg-sky-500/10 border border-sky-500/25 text-sky-400 px-3 py-1 rounded-full"
+              >
+                {fav}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Footer */}
       <footer
         className="fixed bottom-0 left-0 right-0 text-center py-3 border-t border-white/5 text-xs text-slate-700 font-mono"
         style={{
-          background: 'rgba(2, 11, 24, 0.9)',
-          backdropFilter: 'blur(8px)',
+          background: "rgba(2, 11, 24, 0.9)",
+          backdropFilter: "blur(8px)",
         }}
       >
         Metro Navigator India • Demo • Delhi Metro

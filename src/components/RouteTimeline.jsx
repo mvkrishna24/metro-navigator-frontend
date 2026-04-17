@@ -69,7 +69,7 @@ export default function RouteTimeline({ route }) {
               </div>
             </div>
           );
-        })}
+        })} 
       </div>
     </div>
   );
