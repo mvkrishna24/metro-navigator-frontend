@@ -96,6 +96,7 @@ Nearest Station: Central Secretariat
 Route: Rajiv Chowk → Central Secretariat
 Time: 25 mins
 Fare: ₹40
+frequency : 5 Mins
 
 ## 🌍 Future Scope 
 Live train tracking 🚆
